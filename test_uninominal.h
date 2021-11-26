@@ -12,5 +12,5 @@
 
 int min_tab(int *tab, int taille);
 int max_tab(int *tab, int taille, int* max, int excl);
-int uninominale1(MonTableau *tabtab);
+int uninominale1(MonTableau *tabtab, int* max);
 int uninominale2(MonTableau *tabtab);
