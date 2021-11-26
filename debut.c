@@ -2,46 +2,46 @@
 /// \author Anthony PAILLA
 /// \date november 2021
 #include "test_uninominal.h"
-
+#include <errno.h>
 
 int *createDynamiqueTab1D(int ligne){ //creer un tableau d'entier dynamique à une dimension
-  int* tab1d = NULL;
-  if (ligne > 0){
-    tab1d = (int *) malloc(ligne * sizeof(int));
-    if(tab1d==NULL){
-      exit(EXIT_FAILURE);
+    int* tab1d = NULL;
+    if (ligne > 0){
+        tab1d = (int *) malloc(ligne * sizeof(int));
+        if(tab1d==NULL){
+            exit(EXIT_FAILURE);
+        }
+        for (int i=0; i<ligne; i++){
+            tab1d[i]=0;
+        }
     }
-    for (int i=0; i<ligne; i++){
-        tab1d[i]=0;
-    }
-  }
-  return tab1d;
+    return tab1d;
 }
 
 int **createDynamiqueTab2D(int ligne, int nbcolonne){ //creer un tableau d'entier dynamique à deux dimensions
-  int** tab2d = NULL;
-  if (ligne > 0){
-    tab2d= (int **) malloc(ligne*sizeof(int));
-    if(tab2d==NULL){exit(EXIT_FAILURE);}
-    for(int i=0;i<ligne;i++){
-      tab2d[i]=malloc(nbcolonne*sizeof(int));
-      if(tab2d[i]==NULL){exit(EXIT_FAILURE);}
+    int** tab2d = NULL;
+    if (ligne > 0){
+        tab2d= (int **) malloc(ligne*sizeof(int));
+        if(tab2d==NULL){exit(EXIT_FAILURE);}
+        for(int i=0;i<ligne;i++){
+            tab2d[i]=malloc(nbcolonne*sizeof(int));
+            if(tab2d[i]==NULL){exit(EXIT_FAILURE);}
+        }
     }
-  }
-  return tab2d;
+    return tab2d;
 }
 
 char **createDynamiqueStringTab2D(int ligne, int nbcolonne){ //creer un tableau de chaine de caracteres dynamique à deux dimensions
-  char** tab2dstring = NULL;
-  if (ligne>0){
-    tab2dstring = malloc(ligne*sizeof(char));
-    if (tab2dstring == NULL){exit(EXIT_FAILURE);}
-    for(int i=0;i<ligne;i++){
-      tab2dstring[i]=malloc(nbcolonne*sizeof(char));
-      if (tab2dstring[i] == NULL){exit(EXIT_FAILURE);}
+    char** tab2dstring = NULL;
+    if (ligne>0){
+        tab2dstring = malloc(ligne*sizeof(char));
+        if (tab2dstring == NULL){exit(EXIT_FAILURE);}
+        for(int i=0;i<ligne;i++){
+            tab2dstring[i]=malloc(nbcolonne*sizeof(char));
+            if (tab2dstring[i] == NULL){exit(EXIT_FAILURE);}
+        }
     }
-  }
-  return tab2dstring;
+    return tab2dstring;
 }
 
 void ModifierTailleTableau(MonTableau *tab, int axe){
@@ -98,16 +98,18 @@ void afficherTab(MonTableau *tab){
     }
 }
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
+    fprintf(stderr,"Ouverture de : %s\n",filename);
     FILE* fd = fopen(filename,"r");
-    char *ligne= (char *) malloc(sizeof(char));
+    if (fd == NULL) perror("Echec de l'ouverture du fichier");
+    char *ligne= NULL;
     char *votecourant;
-    size_t n = 1;
+    size_t n = 0;
     MonTableau tablo;
     InitTableau(&tablo);
     for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd);
     int lig=0;
-    getline(&ligne,&n,fd); // erreur getline ? mb usage var = getline(&buffer,&size,stdin) ? ligne == NULL donc pb en bas https://c-for-dummies.com/blog/?p=1112 
-    ligne[strlen(ligne)-1] ='\0';  // <===== ici le ptn de probleme
+    getline(&ligne,&n,fd);
+    ligne[strlen(ligne)-1] ='\0';
     votecourant=strtok(ligne,",");
     for (int i=offsetCol; i>0; i--) votecourant=strtok(NULL,",");
     while(votecourant != NULL){
@@ -131,7 +133,7 @@ MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     }
     free(ligne);
     fclose(fd);
-  return tablo;
+    return tablo;
 }
 /*
 void tab1d_in_struct(){}
@@ -174,26 +176,31 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             default: printf("usage: %s (-i | -d) filename -m (uni1,uni2,cm,cs,all) [-o logfile]",argv[0]);
-            exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
         }
     }
     if(o){
         loglog = (int) fopen(logfile,"a");
-        dup2(STDOUT_FILENO,loglog);
+        dup2(STDERR_FILENO,loglog);
     }
     if (i && d){
         printf("option -i et -d mutuellement exclusives");
+        exit(EXIT_FAILURE);
+    }
+    if (!(i||d)){
+        printf("option -i ou -d requise");
         exit(EXIT_FAILURE);
     }
     if (mode == 0){
         printf("option -m requise");
         exit(EXIT_FAILURE);
     }
+    int score_gagnant;
     MonTableau tabtab = read_csv(filename,0,4); // pb à corrigé
     switch (mode) {
         case 1:
-            id_gagnant=uninominale1(&tabtab);
-            printf("mode de scrutin : uninominal à 1 tour, %d candidats, %d votants, vainqueur = %s, score = à completer",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]);
+            id_gagnant=uninominale1(&tabtab,&score_gagnant);
+            printf("mode de scrutin : uninominal a 1 tour, %d candidats, %d votants, vainqueur = %s, score = %.2f %%",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant],(float)score_gagnant*100/(float)tabtab.nblignes);
             break;
         case 2:
             id_gagnant=uninominale2(&tabtab);
@@ -208,5 +215,5 @@ int main(int argc, char *argv[]) {
     }
     freeThemAll(&tabtab);
     fclose((FILE *)loglog);
-  return 0;
+    return 0;
 }
