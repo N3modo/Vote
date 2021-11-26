@@ -106,9 +106,9 @@ MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     InitTableau(&tablo);
     for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd);
     int lig=0;
-    getline(&ligne,&n,fd);
-    ligne[strlen(ligne)-1] ='\0';
-    votecourant=strtok(ligne,","); // <===== ici le ptn de probleme
+    getline(&ligne,&n,fd); // erreur getline ? mb usage var = getline(&buffer,&size,stdin) ? ligne == NULL donc pb en bas
+    ligne[strlen(ligne)-1] ='\0';  // <===== ici le ptn de probleme
+    votecourant=strtok(ligne,",");
     for (int i=offsetCol; i>0; i--) votecourant=strtok(NULL,",");
     while(votecourant != NULL){
         ModifierTailleTableau(&tablo,'x');
