@@ -99,9 +99,9 @@ void afficherTab(MonTableau *tab){
 }
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     FILE* fd = fopen(filename,"r");
-    char *ligne=NULL;
+    char *ligne= (char *) malloc(sizeof(char));
     char *votecourant;
-    size_t n;
+    size_t n = 1;
     MonTableau tablo;
     InitTableau(&tablo);
     for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd);
