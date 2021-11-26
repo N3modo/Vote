@@ -21,15 +21,14 @@ int max_tab(int *tab, int taille, int * max, int excl){
   return position;
 }
 
-int uninominale1(MonTableau *tabtab){
+int uninominale1(MonTableau *tabtab,int *max){
     int leGagnant,sasuke;
     int *tableau_participant = createDynamiqueTab1D(tabtab->nbcol);
     for (int i=0; i<tabtab->nblignes; i++){
         sasuke = min_tab(tabtab->tab[i],tabtab->nbcol);
         if (sasuke != -1) tableau_participant[sasuke]++;
     }
-    int max;
-    leGagnant = max_tab(tableau_participant,tabtab->nbcol, &max, -1);
+    leGagnant = max_tab(tableau_participant,tabtab->nbcol, max, -1);
     free(tableau_participant);
     return leGagnant;
 }
