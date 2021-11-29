@@ -2,6 +2,10 @@
 /// \author Anthony PAILLA
 /// \date november 2021
 
+#ifndef BEGIN_H
+#define BEGIN_H
+
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -23,3 +27,5 @@ void tab1d_in_struct(?);
 void tab2d_in_struct(?);
 void tab2dstring_in_struct(?);*/
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol);
+
+#endif
