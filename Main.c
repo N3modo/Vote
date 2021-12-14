@@ -1,4 +1,4 @@
-/// \file debut.c
+/// \file Main.c
 /// \author Anthony PAILLA
 /// \date november 2021
 #include "test_uninominal.h"
@@ -135,11 +135,7 @@ MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     fclose(fd);
     return tablo;
 }
-/*
-void tab1d_in_struct(){}
-void tab2d_in_struct(){}
-void tab2dstring_in_struct(){}
-*/
+
 int main(int argc, char *argv[]) {
     int opt,mode=0,id_gagnant=-1,loglog;
     bool i=0,d=0,o=0;

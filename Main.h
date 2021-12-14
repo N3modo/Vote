@@ -1,4 +1,4 @@
-/// \file debut.h
+/// \file Main.h
 /// \author Anthony PAILLA
 /// \date november 2021
 

@@ -1,3 +1,6 @@
+/// \file test_uninominal.c
+/// \author Anthony PAILLA
+/// \date november 2021
 #include "test_uninominal.h"
 
 int min_tab(int *tab, int taille){
