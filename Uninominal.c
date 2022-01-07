@@ -1,7 +1,7 @@
-/// \file test_uninominal.c
+/// \file Uninominal.c
 /// \author Anthony PAILLA
 /// \date november 2021
-#include "test_uninominal.h"
+#include "Uninominal.h"
 
 int min_tab(int *tab, int taille){
     for (int i=0; i<taille;i++){

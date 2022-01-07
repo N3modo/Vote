@@ -2,7 +2,7 @@
 /// \author Anthony PAILLA
 /// \date november 2021
 
-#include "test_uninominal.h"
+#include "Uninominal.h"
 #include "main.h"
 
 
