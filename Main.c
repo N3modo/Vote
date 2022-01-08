@@ -3,7 +3,7 @@
 /// \date november 2021
 
 #include "Uninominal.h"
-#include "main.h"
+#include "Main.h"
 
 
 int main(int argc, char *argv[]) {
@@ -62,21 +62,27 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     int score_gagnant;
-    MonTableau tabtab = read_csv(filename,0,4); // pb à corrigé
+    MonTableau tabtab = read_csv(filename,0,4);
     switch (mode) {
-        case 1:
+        case 1: // uninominal 1
             id_gagnant=uninominale1(&tabtab,&score_gagnant);
-            printf("mode de scrutin : uninominal a 1 tour, %d candidats, %d votants, vainqueur = %s, score = %.2f %%",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant],(float)score_gagnant*100/(float)tabtab.nblignes);
+            printf("mode de scrutin : uninominal a un tour, %d candidats, %d votants, vainqueur = %s, score = %.2f %%",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant],(float)score_gagnant*100/(float)tabtab.nblignes);
             break;
-        case 2:
+        case 2: // uninominal 2
             id_gagnant=uninominale2(&tabtab);
-            printf("mode de scrutin :%s", tabtab.tabName[id_gagnant]);
+            printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //1er gagnant de uni2
+            printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //2e gagant de uni2
+            printf("mode de scrutin : uninominal a deux tours, tour 2, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //gagnant
             break;
-        case 3:
+        case 3: // condorcet minimax
+            id_gagnant=minimax();
+            printf("mode de scrutin : Condorcet minimax, %d candidats, %d votants, vainqueur =%s",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]);
             break;
-        case 4:
+        case 4: // condorcet Schulze
+            id_gagnant=Schulze();
+            printf("mode de scrutin : Condorcet Schulze, %d candidats, %d votants, vainqueur =%s",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]);
             break;
-        case 5:
+        case 5: // all
             break;
     }
     freeThemAll(&tabtab);

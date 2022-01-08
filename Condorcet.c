@@ -19,14 +19,39 @@ int ballotToDuel(MonTableau *tabtab){
             }
         }
     }
-    return MDuel;
+    return **MDuel;
 }
 
-int minimax(){
-    return 0
+int Schulze(MonTableau *tabtab,int **MDuel,int NbCandidat){
+    int **MResult = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol);
+    for (int i=0; i<NbCandidat; i++){
+        for (int j=0 ; j<NbCandidat; j++){
+            if (i!=j){
+                if(MDuel[i][j]>MDuel[j][i]){
+                    MResult[i][j]=MDuel[i][j];
+                }else{
+                    MResult[i][j]=0;
+                }
+            }
+        }
+    }
+    for (int i=0; i<NbCandidat; i++){
+        for (int j=0 ; j<NbCandidat; j++){
+            if (i!=j){
+                for(int k=0; k<NbCandidat; k++){
+                    if (i!=k && j!=k){
+                        MResult[j][k]= max(MResult[j][k],min(MResult[j][i],MResult[i][k]));
+                    }
+                }
+            }
+        }
+    }
+    return **MResult;
 }
 
-
+int Minimax(){
+    return 0;
+}
 int maxDuel(int *max){
     *max=0;
     int position=0;

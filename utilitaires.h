@@ -22,6 +22,10 @@ typedef struct {
 int* createDynamiqueTab1D(int ligne);
 int** createDynamiqueTab2D(int ligne,int nbcolonne);
 char** createDynamiqueStringTab2D(int ligne,int nbcolonne);
+void ModifierTailleTableau(MonTableau *tab, int axe);
+void InitTableau(MonTableau *tab);
+void freeThemAll(MonTableau *tabtab);
+void afficherTab(MonTableau *tab);
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol);
 
 

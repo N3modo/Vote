@@ -90,7 +90,6 @@ void freeThemAll(MonTableau *tabtab){
     free(tabtab->tabName);
 }
 
-
 void afficherTab(MonTableau *tab){
     for(int l=0; l<tab->nblignes; l++){
         for(int c=0; c<tab->nbcol; c++){
@@ -99,6 +98,7 @@ void afficherTab(MonTableau *tab){
         printf("\n");
     }
 }
+
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     fprintf(stderr,"Ouverture de : %s\n",filename);
     FILE* fd = fopen(filename,"r");

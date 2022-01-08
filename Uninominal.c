@@ -37,7 +37,7 @@ int uninominale1(MonTableau *tabtab,int *max){
 }
 
 int uninominale2(MonTableau *tabtab){
-    int melenchon,zemmour,sasuke,max;
+    int melenchon,zemmour,sasuke,max,gagnant1,gagnant2;
     int *tableau_participant = createDynamiqueTab1D(tabtab->nbcol);
     for (int i=0; i<tabtab->nblignes; i++){
         sasuke = min_tab(tabtab->tab[i],tabtab->nbcol);
