@@ -20,6 +20,10 @@ int *createDynamiqueTab1D(int ligne){ //creer un tableau d'entier dynamique à u
     return tab1d;
 }
 
+void destroyDynamiqueTab1D(int * tab){
+    free(tab);
+}
+
 int **createDynamiqueTab2D(int ligne, int nbcolonne){ //creer un tableau d'entier dynamique à deux dimensions
     int** tab2d = NULL;
     if (ligne > 0){
@@ -33,19 +37,12 @@ int **createDynamiqueTab2D(int ligne, int nbcolonne){ //creer un tableau d'entie
     return tab2d;
 }
 
-char **createDynamiqueStringTab2D(int ligne, int nbcolonne){ //creer un tableau de chaine de caracteres dynamique à deux dimensions
-    char** tab2dstring = NULL;
-    if (ligne>0){
-        tab2dstring = malloc(ligne*sizeof(char));
-        if (tab2dstring == NULL){exit(EXIT_FAILURE);}
-        for(int i=0;i<ligne;i++){
-            tab2dstring[i]=malloc(nbcolonne*sizeof(char));
-            if (tab2dstring[i] == NULL){exit(EXIT_FAILURE);}
-        }
+void destroyDynamiqueTab2D(int ** tab, int ligne){
+    for(int i=0;i<ligne;i++){
+        free(tab[i]);
     }
-    return tab2dstring;
+    free(tab);
 }
-
 void ModifierTailleTableau(MonTableau *tab, int axe){
     switch(axe){
         case 'y': //augmente le nombre de ligne
@@ -97,6 +94,32 @@ void afficherTab(MonTableau *tab){
         }
         printf("\n");
     }
+}
+
+int min_tab(int *tab, int taille, int * min, int excl){
+    int position=0;
+    if(position==excl) position++;
+    *min=tab[position];
+    for (int i=0; i<taille;i++){
+        if ((tab[i]<=*min) && (i != excl)){
+            *min=tab[i];
+            position = i;
+        }
+    }
+    return position;
+}
+
+int max_tab(int *tab, int taille, int * max, int excl){
+    int position=0;
+    if(position==excl) position++;
+    *max=tab[position];
+    for (int i=0; i<taille;i++){
+        if ((tab[i]>=*max) && (i != excl)){
+            *max=tab[i];
+            position = i;
+        }
+    }
+    return position;
 }
 
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){

@@ -3,11 +3,12 @@
 /// \date november 2021
 
 #include "Uninominal.h"
+#include "Condorcet.h"
 #include "Main.h"
 
 
 int main(int argc, char *argv[]) {
-    int opt,mode=0,id_gagnant=-1,loglog;
+    int opt,mode=0,loglog;
     bool i=0,d=0,o=0;
     char *filename, *logfile;
     while ((opt = getopt(argc, argv, "idom")) != -1) {
@@ -61,28 +62,25 @@ int main(int argc, char *argv[]) {
         printf("option -m requise");
         exit(EXIT_FAILURE);
     }
-    int score_gagnant;
     MonTableau tabtab = read_csv(filename,0,4);
     switch (mode) {
         case 1: // uninominal 1
-            id_gagnant=uninominale1(&tabtab,&score_gagnant);
-            printf("mode de scrutin : uninominal a un tour, %d candidats, %d votants, vainqueur = %s, score = %.2f %%",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant],(float)score_gagnant*100/(float)tabtab.nblignes);
+            uninominale1(&tabtab);
             break;
         case 2: // uninominal 2
-            id_gagnant=uninominale2(&tabtab);
-            printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //1er gagnant de uni2
-            printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //2e gagant de uni2
-            printf("mode de scrutin : uninominal a deux tours, tour 2, %d candidats, %d votants, vainqueur = %s, score = ",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]); //gagnant
+            uninominale2(&tabtab);
             break;
         case 3: // condorcet minimax
-            id_gagnant=minimax();
-            printf("mode de scrutin : Condorcet minimax, %d candidats, %d votants, vainqueur =%s",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]);
+            Minimax(&tabtab);
             break;
         case 4: // condorcet Schulze
-            id_gagnant=Schulze();
-            printf("mode de scrutin : Condorcet Schulze, %d candidats, %d votants, vainqueur =%s",tabtab.nbcol,tabtab.nblignes,tabtab.tabName[id_gagnant]);
+            Schulze(&tabtab);
             break;
         case 5: // all
+            uninominale1(&tabtab);
+            uninominale2(&tabtab);
+            Minimax(&tabtab);
+            Schulze(&tabtab);
             break;
     }
     freeThemAll(&tabtab);

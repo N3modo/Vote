@@ -3,56 +3,49 @@
 /// \date november 2021
 #include "Uninominal.h"
 
-int min_tab(int *tab, int taille){
-    for (int i=0; i<taille;i++){
-        if (tab[i]==1){
-            return i;
-        }
-    }
-    return -1;
-}
-
-int max_tab(int *tab, int taille, int * max, int excl){
-  *max=0;
-  int position;
-  for (int i=0; i<taille;i++){
-    if ((tab[i]>=*max) && (i != excl)){
-      *max=tab[i];
-      position = i;
-    }
-  }
-  return position;
-}
-
-int uninominale1(MonTableau *tabtab,int *max){
-    int leGagnant,sasuke;
+void uninominale1(MonTableau *tabtab){
+    int leGagnant,leGagnant2,sasuke,score_gagnant,score2;
     int *tableau_participant = createDynamiqueTab1D(tabtab->nbcol);
     for (int i=0; i<tabtab->nblignes; i++){
-        sasuke = min_tab(tabtab->tab[i],tabtab->nbcol);
+        sasuke = min_tab(tabtab->tab[i],tabtab->nbcol,&score_gagnant,-1);
         if (sasuke != -1) tableau_participant[sasuke]++;
     }
-    leGagnant = max_tab(tableau_participant,tabtab->nbcol, max, -1);
-    free(tableau_participant);
-    return leGagnant;
+    leGagnant = max_tab(tableau_participant,tabtab->nbcol, &score_gagnant, -1);
+    leGagnant2 = max_tab(tableau_participant,tabtab->nbcol, &score2, leGagnant);
+    destroyDynamiqueTab1D(tableau_participant);
+    if (score2==score_gagnant) {
+        printf("\nmode de scrutin : uninominal a un tour : egalité entre %s et %s\n",
+               tabtab->tabName[leGagnant],tabtab->tabName[leGagnant2]);
+        return;
+    }
+    printf("\nmode de scrutin : uninominal a un tour, %d candidats, %d votants, vainqueur = %s, score = %.2f %%\n",
+           tabtab->nbcol,tabtab->nblignes,tabtab->tabName[leGagnant],(float)score_gagnant*100/(float)tabtab->nblignes);
 }
 
-int uninominale2(MonTableau *tabtab){
-    int melenchon,zemmour,sasuke,max,gagnant1,gagnant2;
+void uninominale2(MonTableau *tabtab){
+    int gagnant1,gagnant2,sasuke,nbvote,nbvote2;
     int *tableau_participant = createDynamiqueTab1D(tabtab->nbcol);
     for (int i=0; i<tabtab->nblignes; i++){
-        sasuke = min_tab(tabtab->tab[i],tabtab->nbcol);
-        if (sasuke != -1) tableau_participant[sasuke]++;
+        sasuke = min_tab(tabtab->tab[i],tabtab->nbcol,&nbvote,-1);
+        if (sasuke != -1) tableau_participant[sasuke]++; // ajout nb de vote dans tableau au indice des candidats
     }
-    melenchon = max_tab(tableau_participant,tabtab->nbcol, &max, -1);
-    if(max > tabtab->nblignes/2) return melenchon;
-    zemmour = max_tab(tableau_participant,tabtab->nbcol, &max, melenchon);
-    free(tableau_participant);
-    int position=0;
+    gagnant1 = max_tab(tableau_participant,tabtab->nbcol, &nbvote, -1);
+    printf("\nmode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = %.2f %%\n",tabtab->nbcol,tabtab->nblignes,tabtab->tabName[gagnant1], (float)(nbvote*100)/(float)tabtab->nblignes); //1er gagnant de uni2
+    if(nbvote > tabtab->nblignes/2) return;
+    gagnant2 = max_tab(tableau_participant,tabtab->nbcol, &nbvote, gagnant1);
+    printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = %.2f %%\n",
+           tabtab->nbcol,tabtab->nblignes,tabtab->tabName[gagnant2],(float)(nbvote*100)/(float)tabtab->nblignes); //2e gagant de uni2
+    destroyDynamiqueTab1D(tableau_participant);
+    nbvote=0;
+    nbvote2=0;
     for (int i=0; i<tabtab->nblignes; i++) {
-        if (tabtab->tab[i][melenchon] < tabtab->tab[i][zemmour])position++;
-        if (tabtab->tab[i][melenchon] > tabtab->tab[i][zemmour])position--;
+        if (tabtab->tab[i][gagnant1] < tabtab->tab[i][gagnant2])nbvote++;
+        if (tabtab->tab[i][gagnant1] > tabtab->tab[i][gagnant2])nbvote2++;
     }
-    if (position > 0) return melenchon;
-    if (position < 0) return zemmour;
-    return (melenchon-zemmour)>0 ? melenchon : zemmour; // l'index le plus grand gagne
+    if (nbvote == nbvote2){
+        printf("mode de scrutin : uninominal a deux tours, tour 2, 2 candidats, %d votants, egalité entre %s et %s, score = %.2f %%\n",
+               tabtab->nblignes,tabtab->tabName[gagnant1],tabtab->tabName[gagnant2],(float)(nbvote*100)/(float)tabtab->nblignes);
+    }
+    printf("mode de scrutin : uninominal a deux tours, tour 2, 2 candidats, %d votants, vainqueur = %s, score = %.2f %%\n",
+           tabtab->nblignes,tabtab->tabName[nbvote>nbvote2 ? gagnant1 : gagnant2],(float)((nbvote>nbvote2 ? nbvote : nbvote2)*100)/(float)tabtab->nblignes); //gagnant
 }

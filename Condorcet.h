@@ -7,6 +7,8 @@
 
 #include "Main.h"
 
-MonTableau ballotToDuel();
+int **Condorcet(MonTableau *tabtab);
+void Schulze(MonTableau *tabtab);
+void Minimax(MonTableau *tabtab);
 
 #endif //TEST_VOTE_CONDORCET_H
