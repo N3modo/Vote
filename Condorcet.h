@@ -8,7 +8,7 @@
 #include "Main.h"
 
 int **Condorcet(MonTableau *tabtab);
-void Schulze(MonTableau *tabtab,FILE * log);
-void Minimax(MonTableau *tabtab,FILE * log);
+void Schulze(MonTableau *tabtab, bool o, FILE * log);
+void Minimax(MonTableau *tabtab, bool o, FILE * log);
 
 #endif

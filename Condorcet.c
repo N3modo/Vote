@@ -28,17 +28,17 @@ int **Condorcet(MonTableau *tabtab){
     return MDuel;
 }
 
-void Schulze(MonTableau *tabtab,FILE * log){
+void Schulze(MonTableau *tabtab,bool o, FILE * log){
 /// \fn fonction schulze
 /// \param[in] structure Montableau
 /// \brief recherche le chemin le plus fort
-    fprintf(log,"mode de scrutin : Condorcet Schulze\n");
+    fprintf(log,"||||||||| mode de scrutin : Condorcet Schulze |||||||||\n");
     int **MDuel = Condorcet(tabtab); //recuperation de la matrice de duel
     int **MResult = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol); //initialisation de la matrice des chemins
     int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); //nb de meilleurs chemins
     int score,id_gagnant;
-    fprintf(log,"\nmatrice Duel:\n");
-    afficherTab2D(MDuel,tabtab->nbcol,tabtab->nbcol,log);
+    if (o)  fprintf(log,"\nmatrice Duel:\n");
+    if (o) afficherTab2D(MDuel,tabtab->nbcol,tabtab->nbcol,log);
 
     for (int i=0; i<tabtab->nbcol; i++){
         for (int j=0 ; j<tabtab->nbcol; j++){
@@ -54,8 +54,8 @@ void Schulze(MonTableau *tabtab,FILE * log){
         }
     }
 
-    fprintf(log,"\nmatrice chemin:\n");
-    afficherTab2D(MResult,tabtab->nbcol,tabtab->nbcol,log);
+    if (o) fprintf(log,"\nmatrice chemin:\n");
+    if (o) afficherTab2D(MResult,tabtab->nbcol,tabtab->nbcol,log);
     for (int i=0; i<tabtab->nbcol; i++){
         for (int j=0 ; j<tabtab->nbcol; j++){
             if (i!=j){
@@ -77,12 +77,12 @@ void Schulze(MonTableau *tabtab,FILE * log){
         }
     }
 
-    fprintf(log,"\nliste nombre chemin plus fort:\n");
-    afficherTab1D(MCandidats,tabtab->nbcol,log);
+    if (o) fprintf(log,"\nliste nombre chemin plus fort:\n");
+    if (o) afficherTab1D(MCandidats,tabtab->nbcol,log);
     id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); //recupere le maximum du nombre de chemin
     printf("\nmode de scrutin : Condorcet Schulze, %d candidats, %d votants, vainqueur = %s\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
-    fprintf(log,"\n%d candidats, %d votants, vainqueur = %s\n\n",
+    if (o) fprintf(log,"\n%d candidats, %d votants, vainqueur = %s\n\n",
             tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
 
     destroyDynamiqueTab2D(MDuel,tabtab->nbcol);
@@ -90,17 +90,17 @@ void Schulze(MonTableau *tabtab,FILE * log){
     destroyDynamiqueTab1D(MCandidats); //free les tableaux
 }
 
-void Minimax(MonTableau *tabtab,FILE * log){
+void Minimax(MonTableau *tabtab, bool o, FILE * log){
 /// \fn fonction minimax
 /// \param[in] structure Montableau
 /// \brief sort le maximum des minimun d'une matrice de duel
-    fprintf(log,"mode de scrutin : Condorcet Minimax\n");
+    if (o) fprintf(log,"||||||||| mode de scrutin : Condorcet Minimax |||||||||\n");
     int **MDuel = Condorcet(tabtab); //recuperation de la matrice de duel
     int **MResult = createDynamiqueTab2D(tabtab->nbcol, tabtab->nbcol); //initialisation de la matrice des chemins
     int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); //nb de meilleurs chemins
     int score,id_gagnant;
-    fprintf(log,"\nmatrice Duel:\n");
-    afficherTab2D(MDuel,tabtab->nbcol,tabtab->nbcol,log);
+    if (o) fprintf(log,"\nmatrice Duel:\n");
+    if (o) afficherTab2D(MDuel,tabtab->nbcol,tabtab->nbcol,log);
 
     for (int i = 0; i < tabtab->nbcol; i++) {
         for (int j = 0; j < tabtab->nbcol; j++) {
@@ -108,20 +108,20 @@ void Minimax(MonTableau *tabtab,FILE * log){
         }
     }
 
-    fprintf(log,"\nmatrice chemin:\n");
-    afficherTab2D(MResult,tabtab->nbcol,tabtab->nbcol,log);
+    if (o) fprintf(log,"\nmatrice chemin:\n");
+    if (o) afficherTab2D(MResult,tabtab->nbcol,tabtab->nbcol,log);
     for (int i = 0; i < tabtab->nbcol; i++) { //recherche des chemins minimum
         min_tab(MResult[i], tabtab->nbcol, &score, i);
         MCandidats[i] = score;
     }
 
-    fprintf(log,"\nliste nombre pires chemins:\n");
-    afficherTab1D(MCandidats,tabtab->nbcol,log);
+    if (o) fprintf(log,"\nliste nombre pires chemins:\n");
+    if (o) afficherTab1D(MCandidats,tabtab->nbcol,log);
     id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); //recherche le maximum des chemins minimum
 
     printf("\nmode de scrutin : Condorcet Minimax, %d candidats, %d votants, vainqueur = %s\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
-    fprintf(log,"\n%d candidats, %d votants, vainqueur = %s\n\n",
+    if (o) fprintf(log,"\n%d candidats, %d votants, vainqueur = %s\n\n",
             tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
     destroyDynamiqueTab2D(MDuel,tabtab->nbcol);
     destroyDynamiqueTab2D(MResult,tabtab->nbcol);
