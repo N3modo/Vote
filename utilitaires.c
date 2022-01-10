@@ -6,7 +6,7 @@
 
 #include <errno.h>
 
-int *createDynamiqueTab1D(int ligne){ //creer un tableau d'entier dynamique à une dimension
+int *createDynamiqueTab1D(int ligne){ //fonction creer un tableau d'entier dynamique à une dimension
     int* tab1d = NULL;
     if (ligne > 0){
         tab1d = (int *) malloc(ligne * sizeof(int));
@@ -20,11 +20,11 @@ int *createDynamiqueTab1D(int ligne){ //creer un tableau d'entier dynamique à u
     return tab1d;
 }
 
-void destroyDynamiqueTab1D(int * tab){
+void destroyDynamiqueTab1D(int * tab){ //fonction free tableau 1D
     free(tab);
 }
 
-int **createDynamiqueTab2D(int ligne, int nbcolonne){ //creer un tableau d'entier dynamique à deux dimensions
+int **createDynamiqueTab2D(int ligne, int nbcolonne){ //fonction creer un tableau d'entier dynamique à deux dimensions
     int** tab2d = NULL;
     if (ligne > 0){
         tab2d= (int **) malloc(ligne*sizeof(int));
@@ -37,13 +37,13 @@ int **createDynamiqueTab2D(int ligne, int nbcolonne){ //creer un tableau d'entie
     return tab2d;
 }
 
-void destroyDynamiqueTab2D(int ** tab, int ligne){
+void destroyDynamiqueTab2D(int ** tab, int ligne){ //fonction free tableau 2D
     for(int i=0;i<ligne;i++){
         free(tab[i]);
     }
     free(tab);
 }
-void ModifierTailleTableau(MonTableau *tab, int axe){
+void ModifierTailleTableau(MonTableau *tab, int axe){ //fonction modifier taille d'un struct tableau
     switch(axe){
         case 'y': //augmente le nombre de ligne
             tab->nblignes++;
@@ -74,12 +74,12 @@ void ModifierTailleTableau(MonTableau *tab, int axe){
     }
 }
 
-void InitTableau(MonTableau *tab){
+void InitTableau(MonTableau *tab){ //fonction initialisation struct tab
     tab->nblignes = 0;
     tab->nbcol= 0;
 }
 
-void freeThemAll(MonTableau *tabtab){
+void freeThemAll(MonTableau *tabtab){ //fonction free structure
     for(int i=0; i<tabtab->nblignes;i++){
         free(tabtab->tab[i]);
     }
@@ -87,16 +87,17 @@ void freeThemAll(MonTableau *tabtab){
     free(tabtab->tabName);
 }
 
-void afficherTab(MonTableau *tab){
+void afficherTab(MonTableau *tab){ //fonction afficher tableau
     for(int l=0; l<tab->nblignes; l++){
         for(int c=0; c<tab->nbcol; c++){
             printf("%d ",tab->tab[l][c]);
         }
         printf("\n");
     }
+    printf("\n");
 }
 
-int min_tab(int *tab, int taille, int * min, int excl){
+int min_tab(int *tab, int taille, int * min, int excl){ //fonction minimum d'un tableau
     int position=0;
     if(position==excl) position++;
     *min=tab[position];
@@ -109,7 +110,7 @@ int min_tab(int *tab, int taille, int * min, int excl){
     return position;
 }
 
-int max_tab(int *tab, int taille, int * max, int excl){
+int max_tab(int *tab, int taille, int * max, int excl){ //fonction maximum d'un tableau
     int position=0;
     if(position==excl) position++;
     *max=tab[position];
@@ -122,7 +123,7 @@ int max_tab(int *tab, int taille, int * max, int excl){
     return position;
 }
 
-MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
+MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){ //fonction lecture fichier CSV
     fprintf(stderr,"Ouverture de : %s\n",filename);
     FILE* fd = fopen(filename,"r");
     if (fd == NULL) perror("Echec de l'ouverture du fichier");

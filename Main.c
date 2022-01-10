@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
                     mode=5;
                 }
                 break;
-            default: printf("usage: %s (-i | -d) filename -m (uni1,uni2,cm,cs,all) [-o logfile]",argv[0]);
+            default: printf("usage: %s (-i | -d) filename -m (uni1,uni2,cm,cs,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
                 exit(EXIT_FAILURE);
         }
     }
@@ -50,40 +50,56 @@ int main(int argc, char *argv[]) {
         loglog = (int) fopen(logfile,"a");
         dup2(STDERR_FILENO,loglog);
     }
-    if (i && d){
+    if (i && d){ // erreur si i et d
         printf("option -i et -d mutuellement exclusives");
         exit(EXIT_FAILURE);
     }
-    if (!(i||d)){
+    if (!(i||d)){ // erreur si pas de i ni de d
         printf("option -i ou -d requise");
         exit(EXIT_FAILURE);
     }
-    if (mode == 0){
+    if (mode == 0){ // erreur si pas de mode
         printf("option -m requise");
         exit(EXIT_FAILURE);
     }
-    MonTableau tabtab = read_csv(filename,0,4);
-    switch (mode) {
-        case 1: // uninominal 1
-            uninominale1(&tabtab);
-            break;
-        case 2: // uninominal 2
-            uninominale2(&tabtab);
-            break;
-        case 3: // condorcet minimax
-            Minimax(&tabtab);
-            break;
-        case 4: // condorcet Schulze
-            Schulze(&tabtab);
-            break;
-        case 5: // all
-            uninominale1(&tabtab);
-            uninominale2(&tabtab);
-            Minimax(&tabtab);
-            Schulze(&tabtab);
-            break;
+    if (d==1){ // vote par matrice de duel
+        MonTableau tabtab = read_csv(filename,0,4);
+        switch (mode) {
+            case 3: // condorcet minimax
+                Minimax(&tabtab);
+                break;
+            case 4: // condorcet schulze
+                Schulze(&tabtab);
+                break;
+            case 5: //all
+                Minimax(&tabtab);
+                Schulze(&tabtab);
+                break;
+            default: printf("usage: %s (-d) filename -m (cm,cs,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
+                exit(EXIT_FAILURE);
+        }
+        freeThemAll(&tabtab);
+        fclose((FILE *)loglog);
+        return 0;
     }
-    freeThemAll(&tabtab);
-    fclose((FILE *)loglog);
-    return 0;
+    if (i==1){ //vote par classement
+        MonTableau tabtab = read_csv(filename,0,4);
+        switch (mode) {
+            case 1: // uninominal 1
+                uninominale1(&tabtab);
+                break;
+            case 2: // uninominal 2
+                uninominale2(&tabtab);
+                break;
+            case 5: // all
+                uninominale1(&tabtab);
+                uninominale2(&tabtab);
+                break;
+            default: printf("usage: %s (-i) filename -m (uni1,uni2,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
+                exit(EXIT_FAILURE);
+        }
+        freeThemAll(&tabtab);
+        fclose((FILE *)loglog);
+        return 0;
+    }
 }
