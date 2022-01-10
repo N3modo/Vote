@@ -2,8 +2,8 @@
 /// \author Anthony PAILLA
 /// \date decembre 2021
 
-#ifndef TEST_VOTE_UTILITAIRES_H
-#define TEST_VOTE_UTILITAIRES_H
+#ifndef utilitaires_h
+#define utilitaires_h
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -33,4 +33,4 @@ int max_tab(int *tab, int taille, int * max, int excl);
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol);
 
 
-#endif //TEST_VOTE_UTILITAIRES_H
+#endif /// \utilitaires_h

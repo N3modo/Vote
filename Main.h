@@ -2,9 +2,9 @@
 /// \author Anthony PAILLA
 /// \date november 2021
 
-#ifndef BEGIN_H
-#define BEGIN_H
+#ifndef main_h
+#define main_h
 
 #include "utilitaires.h"
 
-#endif
+#endif /// \main_h

@@ -2,12 +2,12 @@
 /// \author Anthony PAILLA
 /// \date november 2021
 
-#ifndef UNI_H
-#define UNI_H
+#ifndef uninominale_h
+#define uninominale_h
 
 #include "Main.h"
 
 void uninominale1(MonTableau *tabtab);
 void uninominale2(MonTableau *tabtab);
 
-#endif
+#endif /// \uninominale_h
