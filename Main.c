@@ -9,7 +9,7 @@
 
 int main(int argc, char *argv[]) {
 /// \fn Fonction main
-    printf("usage: *.exe (-i | -d) filename -m (uni1,uni2,all | cm,cs,all) [-o logfile]");
+    if (argc==1) printf("usage: *.exe (-i | -d) filename -m (uni1,uni2,all | cm,cs,all) [-o logfile]\n");
     int opt,mode=0,loglog;
     bool i=0,d=0,o=0;
     char *filename, *logfile;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
                     mode=5;
                 }
                 break;
-            default: printf("usage: %s (-i | -d) filename -m (uni1,uni2,cm,cs,all) [-o logfile]",argv[0]); /// \brief erreur si non respect de l'usage
+            default: printf("usage: %s (-i | -d) filename -m (uni1,uni2,cm,cs,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
                 exit(EXIT_FAILURE);
         }
     }
@@ -52,52 +52,52 @@ int main(int argc, char *argv[]) {
         loglog = (int) fopen(logfile,"a");
         dup2(STDERR_FILENO,loglog);
     }
-    if (i && d){ /// \brief erreur si i et d
+    if (i && d){ //erreur si i et d
         printf("option -i et -d mutuellement exclusives");
         exit(EXIT_FAILURE);
     }
-    if (!(i||d)){ /// \brief erreur si pas de i ni de d
+    if (!(i||d)){ //erreur si pas de i ni de d
         printf("option -i ou -d requise");
         exit(EXIT_FAILURE);
     }
-    if (mode == 0){ /// \brief erreur si pas de mode
+    if (mode == 0){ //erreur si pas de mode
         printf("option -m requise");
         exit(EXIT_FAILURE);
     }
-    if (d==1){ /// \brief vote par matrice de duel
+    if (d==1){ //vote par matrice de duel
         MonTableau tabtab = read_csv(filename,0,4);
         switch (mode) {
-            case 3: /// \brief condorcet minimax
+            case 3: //condorcet minimax
                 Minimax(&tabtab);
                 break;
-            case 4: /// \brief condorcet schulze
+            case 4: //condorcet schulze
                 Schulze(&tabtab);
                 break;
-            case 5: /// \brief all
+            case 5: //all
                 Minimax(&tabtab);
                 Schulze(&tabtab);
                 break;
-            default: printf("usage: %s (-d) filename -m (cm,cs,all) [-o logfile]",argv[0]); /// \brief erreur si non respect de l'usage
+            default: printf("usage: %s (-d) filename -m (cm,cs,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
                 exit(EXIT_FAILURE);
         }
         freeThemAll(&tabtab);
         fclose((FILE *)loglog);
         return 0;
     }
-    if (i==1){ /// \brief vote par classement
+    if (i==1){ //vote par classement
         MonTableau tabtab = read_csv(filename,0,4);
         switch (mode) {
-            case 1: /// \brief uninominal 1
+            case 1: //uninominal 1
                 uninominale1(&tabtab);
                 break;
-            case 2: /// \brief uninominal 2
+            case 2: //uninominal 2
                 uninominale2(&tabtab);
                 break;
-            case 5: /// \brief all
+            case 5: //all
                 uninominale1(&tabtab);
                 uninominale2(&tabtab);
                 break;
-            default: printf("usage: %s (-i) filename -m (uni1,uni2,all) [-o logfile]",argv[0]); /// \brief erreur si non respect de l'usage
+            default: printf("usage: %s (-i) filename -m (uni1,uni2,all) [-o logfile]",argv[0]); //erreur si non respect de l'usage
                 exit(EXIT_FAILURE);
         }
         freeThemAll(&tabtab);
