@@ -11,4 +11,4 @@ int **Condorcet(MonTableau *tabtab);
 void Schulze(MonTableau *tabtab);
 void Minimax(MonTableau *tabtab);
 
-#endif /// \Condorcet_h
+#endif

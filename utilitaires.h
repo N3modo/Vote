@@ -36,4 +36,4 @@ int max_tab(int *tab, int taille, int * max, int excl);
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol);
 
 
-#endif /// \utilitaires_h
+#endif

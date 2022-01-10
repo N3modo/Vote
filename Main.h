@@ -7,4 +7,4 @@
 
 #include "utilitaires.h"
 
-#endif /// \main_h
+#endif

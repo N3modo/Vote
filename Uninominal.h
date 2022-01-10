@@ -10,4 +10,4 @@
 void uninominale1(MonTableau *tabtab);
 void uninominale2(MonTableau *tabtab);
 
-#endif /// \uninominale_h
+#endif
