@@ -14,6 +14,9 @@
 #include <math.h>
 
 typedef struct {
+/// \typedef structure
+/// \struct structure de type MonTableau
+/// \brief contient le nb de ligne, le nb de colonne, definie un tableau 2D et un tableau 2D de string
     int nblignes;
     int nbcol;
     int **tab;

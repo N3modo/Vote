@@ -4,7 +4,10 @@
 
 #include "Condorcet.h"
 
-int **Condorcet(MonTableau *tabtab){ /// \fonction Condorcet : transforme un ballot en matrice de duel
+int **Condorcet(MonTableau *tabtab){
+/// \fn fonction Condorcet : transforme un ballot en matrice de duel
+/// \param[in] structure Montableau
+/// \return Matrice de duel
     int **MDuel = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol);
     for (int i =0;i<tabtab->nbcol;i++){ /// \ double for pour initialiser la matrice de duel à 0
         for (int j=0;j<tabtab->nbcol;j++){
@@ -22,18 +25,20 @@ int **Condorcet(MonTableau *tabtab){ /// \fonction Condorcet : transforme un bal
     return MDuel;
 }
 
-void Schulze(MonTableau *tabtab){ /// \fonction schulze
-    int **MDuel = Condorcet(tabtab); /// \recuperation de la matrice de duel
-    int **MResult = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol); /// \initialisation de la matrice des chemins
-    int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); /// \nb de meilleurs chemins
+void Schulze(MonTableau *tabtab){
+/// \fn fonction schulze
+/// \param[in] structure Montableau
+    int **MDuel = Condorcet(tabtab); /// \brief recuperation de la matrice de duel
+    int **MResult = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol); /// \brief initialisation de la matrice des chemins
+    int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); /// \brief nb de meilleurs chemins
     int score,id_gagnant;
     for (int i=0; i<tabtab->nbcol; i++){
         for (int j=0 ; j<tabtab->nbcol; j++){
             if (i!=j){
                 if(MDuel[i][j]>MDuel[j][i]){
-                    MResult[i][j]=MDuel[i][j]; /// \ matrice de combien i perd contre j
+                    MResult[i][j]=MDuel[i][j]; /// \brief matrice de combien i perd contre j
                 }else{
-                    MResult[i][j]=0; /// \sinon 0
+                    MResult[i][j]=0; /// \brief sinon 0
                 }
             }
         }
@@ -43,7 +48,7 @@ void Schulze(MonTableau *tabtab){ /// \fonction schulze
             if (i!=j){
                 for(int k=0; k<tabtab->nbcol; k++){
                     if (i!=k && j!=k){
-                        MResult[j][k]= fmax((double)MResult[j][k],fmin((double)MResult[j][i],(double)MResult[i][k])); /// \creation du chemin le plus fort du candidat j au candidat k
+                        MResult[j][k]= fmax((double)MResult[j][k],fmin((double)MResult[j][i],(double)MResult[i][k])); /// \brief creation du chemin le plus fort du candidat j au candidat k
                     }
                 }
             }
@@ -53,36 +58,38 @@ void Schulze(MonTableau *tabtab){ /// \fonction schulze
         MCandidats[i]= 0;
         for (int j=0 ; j<tabtab->nbcol; j++){
             if (i!=j) {
-                MCandidats[i] += MResult[i][j] > MResult[j][i]; /// \compte le nombre de chemin le plus fort
+                MCandidats[i] += MResult[i][j] > MResult[j][i]; /// \brief compte le nombre de chemin le plus fort
             }
         }
     }
-    id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); /// \recupere le maximum du nombre de chemin
+    id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); /// \brief recupere le maximum du nombre de chemin
     printf("\nmode de scrutin : Condorcet Schulze, %d candidats, %d votants, vainqueur = %s\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
     destroyDynamiqueTab2D(MDuel,tabtab->nbcol);
     destroyDynamiqueTab2D(MResult,tabtab->nbcol);
-    destroyDynamiqueTab1D(MCandidats); /// \free les malocs
+    destroyDynamiqueTab1D(MCandidats); /// \brief free les tableaux
 }
 
-void Minimax(MonTableau *tabtab){ /// \fonction minimax
-    int **MDuel = Condorcet(tabtab); /// \recuperation de la matrice de duel
-    int **MResult = createDynamiqueTab2D(tabtab->nbcol, tabtab->nbcol); /// \initialisation de la matrice des chemins
-    int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); /// \nb de meilleurs chemins
+void Minimax(MonTableau *tabtab){
+/// \fn fonction minimax
+/// \param[in] structure Montableau
+    int **MDuel = Condorcet(tabtab); /// \brief recuperation de la matrice de duel
+    int **MResult = createDynamiqueTab2D(tabtab->nbcol, tabtab->nbcol); /// \brief initialisation de la matrice des chemins
+    int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); /// \brief nb de meilleurs chemins
     int score,id_gagnant;
     for (int i = 0; i < tabtab->nbcol; i++) {
         for (int j = 0; j < tabtab->nbcol; j++) {
-            MResult[i][j] = MDuel[i][j] - MDuel[j][i]; /// \ de combien i gagne contre j
+            MResult[i][j] = MDuel[i][j] - MDuel[j][i]; /// \brief de combien i gagne contre j
         }
     }
-    for (int i = 0; i < tabtab->nbcol; i++) { /// \recherche des chemins minimum
+    for (int i = 0; i < tabtab->nbcol; i++) { /// \brief recherche des chemins minimum
         min_tab(MResult[i], tabtab->nbcol, &score, i);
         MCandidats[i] = score;
     }
-    id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); /// \ recherhce le maximum des chemins minimum
+    id_gagnant=max_tab(MCandidats,tabtab->nbcol,&score,-1); /// \brief recherhce le maximum des chemins minimum
     printf("\nmode de scrutin : Condorcet Minimax, %d candidats, %d votants, vainqueur = %s\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[id_gagnant]);
     destroyDynamiqueTab2D(MDuel,tabtab->nbcol);
     destroyDynamiqueTab2D(MResult,tabtab->nbcol);
-    destroyDynamiqueTab1D(MCandidats);
+    destroyDynamiqueTab1D(MCandidats); /// \brief free les tableaux
 }
