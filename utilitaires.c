@@ -111,17 +111,29 @@ void freeThemAll(MonTableau *tabtab){
     free(tabtab->tabName);
 }
 
-void afficherTab(MonTableau *tab){
-/// \fn fonction affichertab
+void afficherTab2D(int ** tab,int lig, int col, FILE * log){
+/// \fn fonction afficherTab2D
 /// \param[in] structure MonTableau
-/// \brief affichage d'un tableau
-    for(int l=0; l<tab->nblignes; l++){
-        for(int c=0; c<tab->nbcol; c++){
-            printf("%d ",tab->tab[l][c]);
+/// \brief affichage d'un tableau 2D
+    fprintf(log,"\n");
+    for(int l=0; l<lig; l++){
+        for(int c=0; c<col; c++){
+            fprintf(log,"%d ",tab[l][c]);
         }
-        printf("\n");
+        fprintf(log,"\n");
     }
-    printf("\n");
+    fprintf(log,"\n");
+}
+
+void afficherTab1D(int * tab,int taille,FILE * log){
+    /// \fn fonction afficherTab1D
+    /// \param[in] structure MonTableau
+    /// \brief affichage d'un tableau 1D
+    fprintf(log,"\n");
+    for (int i =0; i<taille;i++){
+        fprintf(log,"%d ",tab[i]);
+    }
+    fprintf(log,"\n");
 }
 
 int min_tab(int *tab, int taille, int * min, int excl){

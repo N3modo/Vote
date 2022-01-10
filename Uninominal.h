@@ -7,7 +7,7 @@
 
 #include "Main.h"
 
-void uninominale1(MonTableau *tabtab);
-void uninominale2(MonTableau *tabtab);
+void uninominale1(MonTableau *tabtab,FILE * log);
+void uninominale2(MonTableau *tabtab,FILE * log);
 
 #endif
