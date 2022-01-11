@@ -38,7 +38,7 @@ int **createDynamiqueTab2D(int ligne, int nbcolonne){
 /// \brief creer un tableau d'entier dynamique à deux dimensions
     int** tab2d = NULL;
     if (ligne > 0){
-        tab2d= (int **) malloc(ligne*sizeof(int));
+        tab2d= (int **) malloc(ligne*sizeof(int*));
         if(tab2d==NULL){exit(EXIT_FAILURE);}
         for(int i=0;i<ligne;i++){
             tab2d[i]=malloc(nbcolonne*sizeof(int));
@@ -58,37 +58,56 @@ void destroyDynamiqueTab2D(int ** tab, int ligne){
     free(tab);
 }
 
-void ModifierTailleTableau(MonTableau *tab, int axe){
+int nombreCandidats(char * ligne,int offsetCol){
+    char* votecourant;
+    int taille = 0;
+    votecourant=strtok(ligne,",");
+    while(votecourant != NULL){
+        taille++;
+        votecourant=strtok(NULL,",");
+    }
+    return taille-offsetCol;
+}
+
+int nombreLignes(FILE * votes,int offsetLigne){
+    size_t n;
+    char * temp = NULL;
+    int taille = 0;
+    while(getline(&temp,&n,votes) != -1){
+        taille++;
+    }
+    return taille-offsetLigne;
+}
+
+void ModifierTailleTableau(MonTableau *tab, int nbColonne, int nbLigne){
 /// \fn fonction ModifierTailleTableau
 /// \param[in] structure MonTableau et un entier ( axe y ou x)
 /// \brief modifier taille d'un struct tableau
-    switch(axe){
-        case 'y': //augmente le nombre de ligne
-            tab->nblignes++;
-            if (tab->nblignes == 1) {
-                tab->tab=(int**)malloc(sizeof(int*));
+    if(nbLigne != tab->nblignes){
+        if(tab->nblignes == 0){
+            tab->tab=(int**)malloc(nbLigne*sizeof(int*));
+        }else{
+            tab->tab=(int**)realloc(tab->tab,nbLigne*sizeof(int*));
+        }
+        for(int i = tab->nblignes; i< nbLigne;i++){
+            if (tab->nbcol != 0) tab->tab[i] = (int*) malloc((tab->nbcol)*sizeof(int));
+        }
+        tab->nblignes=nbLigne;
+    }
+    if(nbColonne != tab->nbcol){
+        for (int i=0;i<tab->nblignes;i++){
+            if (tab->nbcol == 0) {
+                tab->tab[i]=(int*)malloc(nbColonne*sizeof(int));
             }else{
-                tab->tab=(int**)realloc(tab->tab,(tab->nblignes)*sizeof(int*));
+                tab->tab[i]=(int*)realloc(tab->tab[i],(nbColonne)*sizeof(int));
             }
-            if (tab->nbcol != 0) tab->tab[tab->nblignes-1] = (int*) malloc((tab->nbcol)*sizeof(int));
-            break;
-        case 'x': //augmente le nombre de colonne
-            tab->nbcol++;
-            for (int i=0;i<tab->nblignes;i++){
-                if (tab->nbcol == 1) {
-                    tab->tab[i]=(int*)malloc(sizeof(int));
-                }else{
-                    tab->tab[i]=(int*)realloc(tab->tab[i],(tab->nbcol)*sizeof(int));
-                }
-            }
-            if (tab->nbcol == 1) { //fait en sorte que le nombre de candidat soit egal au nombre de colonne
-                tab->tabName=(char**)malloc(sizeof(char*));
-            }else{
-                tab->tabName=(char**)realloc(tab->tabName,(tab->nbcol)*sizeof(char*));
-            }
-            break;
-        default:
-            return;
+        }
+        if(tab->nbcol==0){
+          tab->tabName=(char**)malloc(nbColonne*sizeof(char*));
+        }else{
+          tab->tabName=(char**)realloc(tab->tabName,(nbColonne)*sizeof(char*));
+        }
+        tab->nbcol = nbColonne;
     }
 }
 
@@ -170,42 +189,54 @@ int max_tab(int *tab, int taille, int * max, int excl){
     return position;
 }
 
+
+
+
+
 MonTableau read_csv(char *filename, int offsetLigne, int offsetCol){
     /// \fn fonction lecture fichier CSV
     /// \param[in] un fichier, un offset pour les lignes et un offset pour les colonnes
     /// \brief traite un fichier csv et le renvoie en struct MonTableau
-    fprintf(stderr,"Ouverture de : %s\n",filename);
-    FILE* fd = fopen(filename,"r");
-    if (fd == NULL) perror("Echec de l'ouverture du fichier");
     char *ligne= NULL;
     char *votecourant;
     size_t n = 0;
+    fprintf(stderr,"Ouverture de : %s\n",filename);
+
+    FILE* fd = fopen(filename,"r");
+    if (fd == NULL) perror("Echec de l'ouverture du fichier");
+    int nbVotants = nombreLignes(fd,offsetLigne+1);
+    fclose(fd);
+    fd = fopen(filename,"r");
+    if (fd == NULL) perror("Echec de l'ouverture du fichier");
+    for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd); //offset des lignes
+    getline(&ligne,&n,fd);
+    int nbcandidats = nombreCandidats(ligne,offsetCol); //le vrai truc
+    fclose(fd);
     MonTableau tablo;
     InitTableau(&tablo);
-    for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd);
-    int lig=0;
+    ModifierTailleTableau(&tablo,nbcandidats,nbVotants);
+    fd = fopen(filename,"r");
+    if (fd == NULL) perror("Echec de l'ouverture du fichier");
+    for (int i=offsetLigne; i>0; i--) getline(&ligne,&n,fd); //offset des lignes
     getline(&ligne,&n,fd);
-    ligne[strlen(ligne)-1] ='\0';
+    ligne[strlen(ligne)-1] ='\0'; //magie noire pour eviter le \n
     votecourant=strtok(ligne,",");
     for (int i=offsetCol; i>0; i--) votecourant=strtok(NULL,",");
+    int candidat_actuel = 0;
     while(votecourant != NULL){
-        ModifierTailleTableau(&tablo,'x');
-        tablo.tabName[tablo.nbcol-1]= (char*)malloc(strlen(&(votecourant[26]))* sizeof(char));
-        strcpy(tablo.tabName[tablo.nbcol-1],&(votecourant[26]));
+        tablo.tabName[candidat_actuel] = (char*)malloc(strlen(votecourant)* sizeof(char));
+        strcpy(tablo.tabName[candidat_actuel],votecourant);
         votecourant=strtok(NULL,",");
+        candidat_actuel++;
     }
-    while (getline(&ligne,&n,fd) != -1){
-        ModifierTailleTableau(&tablo,'y');
-        int col=0;
+
+    for(int lig = 0; (getline(&ligne,&n,fd) != -1) && (lig < tablo.nblignes); lig++){
         votecourant=strtok(ligne,",");
-        for (int i=offsetCol; i>0; i--) votecourant=strtok(NULL,",");
-        while (votecourant != NULL){
-            if (col >= tablo.nbcol) ModifierTailleTableau(&tablo,'x');
+        for (int i=offsetCol; i>0; i--) votecourant=strtok(NULL,","); //on skip tout$
+        for( int col = 0; col < tablo.nbcol; col++){
             sscanf(votecourant,"%d",&(tablo.tab[lig][col]));
             votecourant=strtok(NULL,",");
-            col++;
         }
-        lig++;
     }
     free(ligne);
     fclose(fd);
