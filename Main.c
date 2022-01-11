@@ -6,7 +6,6 @@
 #include "Condorcet.h"
 #include "Main.h"
 
-
 int main(int argc, char *argv[]) {
 /// \fn Fonction main
     if (argc==1) printf("usage: %s (-i | -d) filename -m (uni1,uni2,all | cm,cs,all) [-o logfile]\n",argv[0]);
