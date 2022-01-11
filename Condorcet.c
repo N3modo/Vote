@@ -9,14 +9,12 @@ int **Condorcet(MonTableau *tabtab){
 /// \param[in] structure Montableau
 /// \return Matrice de duel
 /// \brief transforme un ballot en matrice de duel
-
     int **MDuel = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol);
     for (int i =0;i<tabtab->nbcol;i++){ //double for pour initialiser la matrice de duel à 0
         for (int j=0;j<tabtab->nbcol;j++){
             MDuel[j][i]=0;
         }
     }
-
     for (int indexvotant=0; indexvotant<tabtab->nblignes; indexvotant++){
         for (int candidatA=0; candidatA<tabtab->nbcol-1; candidatA++){
             for (int candidatB=candidatA+1; candidatB<tabtab->nbcol;candidatB++){
@@ -32,14 +30,13 @@ void Schulze(MonTableau *tabtab,bool o, FILE * log){
 /// \fn fonction schulze
 /// \param[in] structure Montableau
 /// \brief recherche le chemin le plus fort
-    fprintf(log,"||||||||| mode de scrutin : Condorcet Schulze |||||||||\n");
+    if (o) fprintf(log,"||||||||| mode de scrutin : Condorcet Schulze |||||||||\n");
     int **MDuel = Condorcet(tabtab); //recuperation de la matrice de duel
     int **MResult = createDynamiqueTab2D(tabtab->nbcol,tabtab->nbcol); //initialisation de la matrice des chemins
     int *MCandidats = createDynamiqueTab1D(tabtab->nbcol); //nb de meilleurs chemins
     int score,id_gagnant;
-    if (o)  fprintf(log,"\nmatrice Duel:\n");
+    if (o) fprintf(log,"\nmatrice Duel:\n");
     if (o) afficherTab2D(MDuel,tabtab->nbcol,tabtab->nbcol,log);
-
     for (int i=0; i<tabtab->nbcol; i++){
         for (int j=0 ; j<tabtab->nbcol; j++){
             if (i!=j){
