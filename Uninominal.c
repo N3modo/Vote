@@ -15,7 +15,7 @@ void uninominale1(MonTableau *tabtab, bool o, FILE * log){
         if (sasuke != -1) tableau_participant[sasuke]++;
     }
 
-    afficherTab1D(tableau_participant,tabtab->nbcol,log);
+    if (o) afficherTab1D(tableau_participant,tabtab->nbcol,log);
     leGagnant = max_tab(tableau_participant,tabtab->nbcol, &score_gagnant, -1);
     //printf("\ngagnant 1 : %s \n",tabtab->tabName[leGagnant]);
     if (o) fprintf(log,"\ngagnant 1 : %s \n",tabtab->tabName[leGagnant]);
@@ -46,15 +46,15 @@ void uninominale2(MonTableau *tabtab, bool o, FILE * log){
         if (sasuke != -1) tableau_participant[sasuke]++;
     }
 
-    afficherTab1D(tableau_participant,tabtab->nbcol,log);
+    if (o) afficherTab1D(tableau_participant,tabtab->nbcol,log);
     gagnant1 = max_tab(tableau_participant,tabtab->nbcol, &nbvote, -1); //1e gagnant de uni2 tour 1
-    if (o) fprintf(log,"\ngagnant 1 : %s \n",tabtab->tabName[gagnant1]);
+    if (o) fprintf(log,"\ngagnant 1 : %s, score = %.2f %% \n",tabtab->tabName[gagnant1],(float)(nbvote*100)/(float)tabtab->nblignes);
     printf("\nmode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = %.2f %%\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[gagnant1], (float)(nbvote*100)/(float)tabtab->nblignes); //1er gagnant de uni2
 
     if(nbvote > tabtab->nblignes/2) return;
     gagnant2 = max_tab(tableau_participant,tabtab->nbcol, &nbvote, gagnant1); //2e gagnant de uni2 tour 1
-    if (o) fprintf(log,"\ngagnant 2 : %s \n",tabtab->tabName[gagnant2]);
+    if (o) fprintf(log,"\ngagnant 2 : %s, score = %.2f %% \n",tabtab->tabName[gagnant2],(float)(nbvote*100)/(float)tabtab->nblignes);
     printf("mode de scrutin : uninominal a deux tours, tour 1, %d candidats, %d votants, vainqueur = %s, score = %.2f %%\n",
            tabtab->nbcol,tabtab->nblignes,tabtab->tabName[gagnant2],(float)(nbvote*100)/(float)tabtab->nblignes); //2e gagnant de uni2
     destroyDynamiqueTab1D(tableau_participant);
